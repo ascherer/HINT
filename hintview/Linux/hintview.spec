@@ -32,12 +32,7 @@ make
 
 %install
 cd %{name}/Linux
-strip hintview
-%{__rm} -rf %{buildroot}
-%{__install} -d %{buildroot}%{_bindir} \
-	%{buildroot}%{_mandir}/man1
-%{__install} -t %(buildroot}%{_bindir) --mode=755 hintview
-%{__install} -t %(buildroot}%{_mandir)/man1 --mode=644 hintview.1
+%make_install
 
 %files
 %{_bindir}/%{name}
