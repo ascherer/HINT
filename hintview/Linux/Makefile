@@ -76,8 +76,8 @@ SRC= $(OBJ:.o=.c) $(HFILES) main.h stb_image.h Makefile CMakeLists.txt
 DIST_SRC = $(SRC:%=src/%)
 DIST_MAN = man/hintview.1
 
-BINDIR=/usr/local/bin
-MANDIR=/usr/local/man
+BINDIR=/usr/bin
+MANDIR=/usr/share/man
 
 install: hintview
 	strip hintview
@@ -90,5 +90,3 @@ install: hintview
 clean:
 	rm -f *.o *~ *.dvi *.log *.aux
 	rm -f hintview
-
-

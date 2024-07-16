@@ -24,7 +24,7 @@ Requires: libglew2.2 libglfw3
 The Hintview program for Linux.
 
 %prep
-%autosetup -c
+%autosetup
 
 %build
 cd %{name}/Linux
