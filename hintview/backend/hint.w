@@ -28,7 +28,7 @@
 \input hintmac.tex
 \input epsf.tex
 
-@i symbols.w
+@q @@i symbols.w @>
 
 \font\largetitlefont=cmssbx10 scaled\magstep4
 \font\Largetitlefont=cmssbx10 at 40pt
@@ -9234,7 +9234,7 @@ start a new nesting level, and set its horizontal size.
 @<prepare for reading the paragraph list@>=
   pointer par_ptr=null;
   if (KIND(*hpos)==list_kind)
-  { uint32_t s, t;
+  { uint32_t s=0, t=0;
     @<read the start byte |a|@>@;
     if ((INFO(a)&b011)==0) 
     {  HGET8; s=0; }/* the empty list */
@@ -15031,5 +15031,5 @@ the \HINT\ rendering functions.
 }
 
   \write\cont{} % ensure that the contents file isn't empty
-%  \write\cont{\catcode `\noexpand\@=12\relax}   % \makeatother
+%  \write\cont{\catcode `\noexpand\@@=12\relax}   % \makeatother
   \closeout\cont% the contents information has been fully gathered
