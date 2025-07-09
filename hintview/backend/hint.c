@@ -19,31 +19,21 @@
 #include "rendernative.h"
 #include "get.h"
 
-#define banner "This is HINT based on TeX, Version 3.141592653" \
-
-#define odd(X) ((X) &1) 
-#define abs(X) ((X) > -(X) ?(X) :-(X) ) 
-#define round(X) ((int) ((X) >=0.0?floor((X) +0.5) :ceil((X) -0.5) ) )  \
-
-#define mem_bot 0 \
-
-#define mem_top mem_max \
- \
-
-#define font_base 0 \
- \
- \
-
+#define banner "This is HINT based on TeX, Version 3.141592653"
+#define odd(X) ((X) &1)
+#define abs(X) ((X) > -(X) ?(X) :-(X) )
+#define round(X) ((int) ((X) >=0.0?floor((X) +0.5) :ceil((X) -0.5) ) )
+#define mem_bot 0
+#define mem_top mem_max
+#define font_base 0
 #define incr(A) A= A+1
 #define decr(A) A= A-1
 #define negate(A) A= -A
-#define loop while(true) 
+#define loop while(true)
 #define do_nothing 
-#define empty 0 \
- \
-
+#define empty 0
 #define print_lc_hex(A)  \
-if((A) <10) print_char((A) +'0') ;else print_char((A) -10+'a') 
+if((A) <10) print_char((A) +'0') ;else print_char((A) -10+'a')
 #define print_ASCII(k)  \
 if((k<' ') ||(k> '~') )  \
 {print("^^") ; \
@@ -51,58 +41,39 @@ if(k<0100) print_char(k+0100) ; \
 else if(k<0200) print_char(k-0100) ; \
 else{print_lc_hex(k/16) ;print_lc_hex(k%16) ;} \
 } \
-else print_char(k)  \
-
-#define unity 0200000 \
- \
-
-#define inf_bad 10000 \
-
+else print_char(k)
+#define unity 0200000
+#define inf_bad 10000
 #define set_glue_ratio_zero(A) A= 0.0
 #define set_glue_ratio_one(A) A= 1.0
-#define unfix(A) ((double) (A) ) 
-#define fix(A) ((glue_ratio) (A) ) 
-#define float_constant(A) ((double) (A) )  \
-
+#define unfix(A) ((double) (A) )
+#define fix(A) ((glue_ratio) (A) )
+#define float_constant(A) ((double) (A) )
 #define min_quarterword 0
 #define min_halfword 0
-#define max_halfword 65535 \
- \
-
-#define qi(A) A+min_quarterword \
-
-#define qo(A) A-min_quarterword \
- \
-
-#define sc i \
-
+#define max_halfword 65535
+#define qi(A) A+min_quarterword
+#define qo(A) A-min_quarterword
+#define sc i
 #define pointer halfword
-#define null min_halfword \
-
+#define null min_halfword
 #define link(A) mem[A].hh.rh
-#define info(A) mem[A].hh.lh \
-
+#define info(A) mem[A].hh.lh
 #define mem_end mem_top
 #define free_avail(A)  \
 {link(A) = avail;avail= A; \
 decr_dyn_used; \
-} \
- \
-
+}
 #define empty_flag max_halfword
-#define is_empty(A) (link(A) ==empty_flag) 
-#define node_size(A) info(A) 
-#define llink(A) info(A+1) 
-#define rlink(A) link(A+1)  \
-
+#define is_empty(A) (link(A) ==empty_flag)
+#define node_size(A) info(A)
+#define llink(A) info(A+1)
+#define rlink(A) link(A+1)
 #define type(A) mem[A].hh.b0
-#define subtype(A) mem[A].hh.b1 \
-
-#define is_char_node(A) (A>=hi_mem_min)  \
-
-#define font(A) type(A) 
-#define character(A) subtype(A)  \
-
+#define subtype(A) mem[A].hh.b1
+#define is_char_node(A) (A>=hi_mem_min)
+#define font(A) type(A)
+#define character(A) subtype(A)
 #define hlist_node 0
 #define box_node_size 9
 #define width_offset 1
@@ -113,89 +84,72 @@ decr_dyn_used; \
 #define height(A) mem[A+height_offset].sc
 #define shift_amount(A) mem[A+4].sc
 #define list_offset 5
-#define list_ptr(A) link(A+list_offset) 
-#define glue_order(A) subtype(A+list_offset) 
-#define glue_sign(A) type(A+list_offset) 
+#define list_ptr(A) link(A+list_offset)
+#define glue_order(A) subtype(A+list_offset)
+#define glue_sign(A) type(A+list_offset)
 #define normal 0
 #define stretching 1
 #define shrinking 2
 #define glue_offset 6
-#define glue_set(A) mem[A+glue_offset].gr \
- \
-
-#define vlist_node 1 \
-
+#define glue_set(A) mem[A+glue_offset].gr
+#define vlist_node 1
 #define rule_node 2
 #define rule_node_size 4
 #define null_flag -010000000000
-#define is_running(A) (A==null_flag)  \
-
+#define is_running(A) (A==null_flag)
 #define ins_node 3
 #define ins_node_size 5
 #define float_cost(A) mem[A+1].i
-#define ins_ptr(A) info(A+4) 
-#define split_top_ptr(A) link(A+4)  \
-
+#define ins_ptr(A) info(A+4)
+#define split_top_ptr(A) link(A+4)
 #define adjust_node 5
-#define adjust_ptr(A) mem[A+1].i \
-
+#define adjust_ptr(A) mem[A+1].i
 #define ligature_node 6
 #define small_node_size 2
 #define lig_char(A) A+1
-#define lig_ptr(A) link(lig_char(A) )  \
-
+#define lig_ptr(A) link(lig_char(A) )
 #define disc_node 7
-#define replace_count(A) (subtype(A) &0x7F) 
-#define set_replace_count(A,B) (subtype(A) = (B) &0x7F) 
-#define set_auto_disc(A) (subtype(A) |= 0x80) 
-#define is_auto_disc(A) (subtype(A) &0x80) 
-#define pre_break(A) llink(A) 
-#define post_break(A) rlink(A)  \
-
-#define whatsit_node 8 \
-
+#define replace_count(A) (subtype(A) &0x7F)
+#define set_replace_count(A,B) (subtype(A) = (B) &0x7F)
+#define set_auto_disc(A) (subtype(A) |= 0x80)
+#define is_auto_disc(A) (subtype(A) &0x80)
+#define pre_break(A) llink(A)
+#define post_break(A) rlink(A)
+#define whatsit_node 8
 #define math_node 9
 #define before 0
-#define after 1 \
-
-#define precedes_break(A) (type(A) <math_node) 
-#define non_discardable(A) (type(A) <math_node)  \
-
+#define after 1
+#define precedes_break(A) (type(A) <math_node)
+#define non_discardable(A) (type(A) <math_node)
 #define glue_node 10
 #define mu_glue 99
 #define a_leaders 100
 #define c_leaders 101
 #define x_leaders 102
-#define glue_ptr(A) llink(A) 
-#define leader_ptr(A) rlink(A)  \
-
+#define glue_ptr(A) llink(A)
+#define leader_ptr(A) rlink(A)
 #define glue_spec_size 4
-#define glue_ref_count(A) link(A) 
+#define glue_ref_count(A) link(A)
 #define stretch(A) mem[A+2].sc
 #define shrink(A) mem[A+3].sc
-#define stretch_order(A) type(A) 
-#define shrink_order(A) subtype(A) 
+#define stretch_order(A) type(A)
+#define shrink_order(A) subtype(A)
 #define fil 1
 #define fill 2
-#define filll 3 \
-
+#define filll 3
 #define kern_node 11
 #define explicit 1
-#define acc_kern 2 \
-
+#define acc_kern 2
 #define penalty_node 12
 #define inf_penalty inf_bad
-#define eject_penalty (-inf_penalty) 
-#define penalty(A) mem[A+1].i \
-
+#define eject_penalty (-inf_penalty)
+#define penalty(A) mem[A+1].i
 #define unset_node 13
 #define glue_stretch(A) mem[A+glue_offset].sc
-#define glue_shrink(A) shift_amount(A) 
-#define span_count(A) subtype(A)  \
-
+#define glue_shrink(A) shift_amount(A)
+#define span_count(A) subtype(A)
 #define zero_glue mem_bot
-#define lo_mem_stat_max zero_glue+glue_spec_size-1 \
-
+#define lo_mem_stat_max zero_glue+glue_spec_size-1
 #define page_ins_head mem_top
 #define contrib_head mem_top-1
 #define page_head mem_top-2
@@ -204,28 +158,20 @@ decr_dyn_used; \
 #define adjust_head mem_top-5
 #define active mem_top-7
 #define lig_trick mem_top-12
-#define hi_mem_stat_min mem_top-13 \
-
-#define hi_mem_stat_usage 14 \
- \
-
+#define hi_mem_stat_min mem_top-13
+#define hi_mem_stat_usage 14
 #define node_list_display(A)  \
 {depth_level++;show_node_list(A) ;depth_level--; \
-} \
-
-#define token_ref_count(A) info(A)  \
-
+}
+#define token_ref_count(A) info(A)
 #define fast_delete_glue_ref(A)  \
 {if(glue_ref_count(A) ==null) free_node(A,glue_spec_size) ; \
 else decr(glue_ref_count(A) ) ; \
-} \
-
-#define add_token_ref(A) incr(token_ref_count(A) ) 
-#define add_glue_ref(A) incr(glue_ref_count(A) ) 
-#define add_xdimen_ref(A) if(A!=null) incr(xdimen_ref_count(A) )  \
-
-#define ignore_depth -65536000 \
-
+}
+#define add_token_ref(A) incr(token_ref_count(A) )
+#define add_glue_ref(A) incr(glue_ref_count(A) )
+#define add_xdimen_ref(A) if(A!=null) incr(xdimen_ref_count(A) )
+#define ignore_depth -65536000
 #define head cur_list.head_field
 #define tail cur_list.tail_field
 #define prev_graf cur_list.pg_field
@@ -234,26 +180,21 @@ else decr(glue_ref_count(A) ) ; \
 #define cur_bs cur_list.bs_field
 #define cur_ls cur_list.ls_field
 #define cur_lsl cur_list.lsl_field
-#define needs_bs (cur_list.bs_pos!=NULL) 
+#define needs_bs (cur_list.bs_pos!=NULL)
 #define prev_height cur_list.ht_field
 #define node_pos cur_list.np_field
-#define node_pos1 (nest_ptr==0?0:nest[nest_ptr-1].np_field)  \
-
+#define node_pos1 (nest_ptr==0?0:nest[nest_ptr-1].np_field)
 #define tail_append(A) {link(tail) = A;tail= link(tail) ; \
-} \
-
-#define right_skip_code 8 \
-
+}
+#define right_skip_code 8
 #define line_skip pointer_def[glue_kind][line_skip_no]
 #define baseline_skip pointer_def[glue_kind][baseline_skip_no]
 #define left_skip pointer_def[glue_kind][left_skip_no]
 #define right_skip pointer_def[glue_kind][right_skip_no]
 #define top_skip pointer_def[glue_kind][top_skip_no]
-#define split_top_skip pointer_def[glue_kind][split_top_skip_no] \
-
+#define split_top_skip pointer_def[glue_kind][split_top_skip_no]
 #define par_shape_ptr null
-#define box(A) (*box_ptr(A) )  \
-
+#define box(A) (*box_ptr(A) )
 #define pretolerance integer_def[pretolerance_no]
 #define tolerance integer_def[tolerance_no]
 #define line_penalty integer_def[line_penalty_no]
@@ -269,43 +210,34 @@ else decr(glue_ref_count(A) ) ; \
 #define final_hyphen_demerits integer_def[final_hyphen_demerits_no]
 #define adj_demerits integer_def[adj_demerits_no]
 #define looseness integer_def[looseness_no]
-#define tracing_paragraphs (debugflags&DBGTEX) 
-#define tracing_pages (debugflags&DBGPAGE) 
-#define hang_after integer_def[hang_after_no] \
-
+#define tracing_paragraphs (debugflags&DBGTEX)
+#define tracing_pages (debugflags&DBGPAGE)
+#define hang_after integer_def[hang_after_no]
 #define line_skip_limit dimen_def[line_skip_limit_no]
 #define max_depth dimen_def[max_depth_no]
 #define pre_display_size cur_list.ds_field
 #define display_width cur_list.dw_field
 #define display_indent cur_list.di_field
 #define hang_indent dimen_def[hang_indent_no]
-#define emergency_stretch dimen_def[emergency_stretch_no] \
-
-#define max_dimen 07777777777 \
-
-#define math_quad dimen_def[math_quad_no] \
-
-#define quad_code 6 \
-
+#define emergency_stretch dimen_def[emergency_stretch_no]
+#define max_dimen 07777777777
+#define math_quad dimen_def[math_quad_no]
+#define quad_code 6
 #define char_info(A,B) font_info[char_base[A]+B].qqqq
 #define char_width(A,B) (width_base[A]!=0? \
-font_info[width_base[A]+char_info(A,B) .b0].sc:ft_char_width(A,B) ) 
-#define char_exists(A) (A.b0> min_quarterword) 
-#define height_depth(A) qo(A.b1) 
+font_info[width_base[A]+char_info(A,B) .b0].sc:ft_char_width(A,B) )
+#define char_exists(A) (A.b0> min_quarterword)
+#define height_depth(A) qo(A.b1)
 #define char_height(A,B) font_info[height_base[A]+(B) /16].sc
-#define char_depth(A,B) font_info[depth_base[A]+(B) %16].sc \
- \
-
+#define char_depth(A,B) font_info[depth_base[A]+(B) %16].sc
 #define param_end(A) param_base[A]].sc
 #define param(A) font_info[A+param_end
-#define quad param(quad_code)  \
-
-#define abort goto bad_tfm \
-
-#define fget (hpos++) 
-#define fskip(A) (hpos+= A) 
-#define fskip_four fskip(4) 
-#define fbyte (*hpos) 
+#define quad param(quad_code)
+#define abort goto bad_tfm
+#define fget (hpos++)
+#define fskip(A) (hpos+= A)
+#define fskip_four fskip(4)
+#define fbyte (*hpos)
 #define read_sixteen(A) {A= fbyte; \
 if(A> 127) abort; \
 fget;A= A*0400+fbyte; \
@@ -315,119 +247,84 @@ fget;b= fbyte;qw.b1= qi(b) ; \
 fget;c= fbyte;qw.b2= qi(c) ; \
 fget;d= fbyte;qw.b3= qi(d) ; \
 A= qw; \
-} \
-
+}
 #define store_scaled(A) {fget;a= fbyte;fget;b= fbyte; \
 fget;c= fbyte;fget;d= fbyte; \
 sw= (((((d*z) /0400) +(c*z) ) /0400) +(b*z) ) /beta; \
 if(a==0) A= sw;else if(a==255) A= sw-alpha;else abort; \
-} \
-
-#define adjust(A) A[f]= qo(A[f])  \
- \
-
+}
+#define adjust(A) A[f]= qo(A[f])
 #define exactly 0
 #define additional 1
-#define natural 0,additional \
-
-#define vpack(A,B) vpackage(A,B,max_dimen)  \
-
-#define tight_fit 3 \
-
-#define loose_fit 1 \
-
-#define very_loose_fit 0 \
-
-#define decent_fit 2 \
-
+#define natural 0,additional
+#define vpack(A,B) vpackage(A,B,max_dimen)
+#define tight_fit 3
+#define loose_fit 1
+#define very_loose_fit 0
+#define decent_fit 2
 #define active_node_size 3
-#define fitness(A) subtype(A) 
-#define break_node(A) rlink(A) 
-#define line_number(A) llink(A) 
+#define fitness(A) subtype(A)
+#define break_node(A) rlink(A)
+#define line_number(A) llink(A)
 #define total_demerits(A) mem[A+2].i
 #define unhyphenated 0
 #define hyphenated 1
-#define last_active active \
-
+#define last_active active
 #define passive_node_size 2
-#define cur_break(A) rlink(A) 
-#define prev_break(A) llink(A) 
-#define serial(A) info(A)  \
-
+#define cur_break(A) rlink(A)
+#define prev_break(A) llink(A)
+#define serial(A) info(A)
 #define delta_node_size 7
-#define delta_node 2 \
-
-#define do_all_six(A) A(1) ;A(2) ;A(3) ;A(4) ;A(5) ;A(6)  \
-
+#define delta_node 2
+#define do_all_six(A) A(1) ;A(2) ;A(3) ;A(4) ;A(5) ;A(6)
 #define check_shrinkage(A) if((shrink_order(A) !=normal) &&(shrink(A) !=0) )  \
 {A= finite_shrink(A) ; \
-} \
-
+}
 #define copy_to_cur_active(A) cur_active_width[A]= active_width[A]
 #define update_width(A)  \
-cur_active_width[A]= cur_active_width[A]+mem[r+A].sc \
-
-#define awful_bad 07777777777 \
-
-#define set_break_width_to_background(A) break_width[A]= background[A] \
-
+cur_active_width[A]= cur_active_width[A]+mem[r+A].sc
+#define awful_bad 07777777777
+#define set_break_width_to_background(A) break_width[A]= background[A]
 #define convert_to_break_width(A)  \
 mem[prev_r+A].sc= mem[prev_r+A].sc \
 -cur_active_width[A]+break_width[A]
 #define store_break_width(A) active_width[A]= break_width[A]
 #define new_delta_to_break_width(A)  \
-mem[q+A].sc= break_width[A]-cur_active_width[A] \
-
+mem[q+A].sc= break_width[A]-cur_active_width[A]
 #define new_delta_from_break_width(A) mem[q+A].sc=  \
-cur_active_width[A]-break_width[A] \
-
+cur_active_width[A]-break_width[A]
 #define combine_two_deltas(A) mem[prev_r+A].sc= mem[prev_r+A].sc+mem[r+A].sc
 #define downdate_width(A) cur_active_width[A]= cur_active_width[A]- \
-mem[prev_r+A].sc \
-
-#define update_active(A) active_width[A]= active_width[A]+mem[r+A].sc \
-
-#define store_background(A) active_width[A]= background[A] \
-
+mem[prev_r+A].sc
+#define update_active(A) active_width[A]= active_width[A]+mem[r+A].sc
+#define store_background(A) active_width[A]= background[A]
 #define act_width active_width[1]
 #define kern_break {if(!is_char_node(link(cur_p) ) &&auto_breaking)  \
 if(type(link(cur_p) ) ==glue_node) try_break(0,unhyphenated) ; \
 act_width= act_width+width(cur_p) ; \
-} \
-
-#define next_break prev_break \
-
+}
+#define next_break prev_break
 #define active_height active_width
 #define cur_height active_height[1]
-#define set_height_zero(A) active_height[A]= 0 \
-
-#define deplorable 100000 \
-
-#define inserts_only 1 \
-
-#define box_there 2 \
-
+#define set_height_zero(A) active_height[A]= 0
+#define deplorable 100000
+#define inserts_only 1
+#define box_there 2
 #define page_ins_node_size 4
 #define inserting 0
 #define split_up 1
-#define broken_ptr(A) link(A+1)  \
-
-#define broken_ins(A) info(A+1) 
-#define last_ins_ptr(A) link(A+2) 
-#define best_ins_ptr(A) info(A+2)  \
-
+#define broken_ptr(A) link(A+1)
+#define broken_ins(A) info(A+1)
+#define last_ins_ptr(A) link(A+2)
+#define best_ins_ptr(A) info(A+2)
 #define page_goal page_so_far[0]
 #define page_total page_so_far[1]
 #define page_shrink page_so_far[6]
-#define page_depth page_so_far[7] \
-
+#define page_depth page_so_far[7]
 #define print_plus(A,B) if(page_so_far[A]!=0)  \
-{print(" plus ") ;print_scaled(page_so_far[A]) ;print(B) ;} \
-
-#define set_page_so_far_zero(A) page_so_far[A]= 0 \
-
-#define contrib_tail nest[0].tail_field \
-
+{print(" plus ") ;print_scaled(page_so_far[A]) ;print(B) ;}
+#define set_page_so_far_zero(A) page_so_far[A]= 0
+#define contrib_tail nest[0].tail_field
 #define write_node_size 2
 #define open_node_size 3
 #define open_node 0
@@ -435,143 +332,120 @@ act_width= act_width+width(cur_p) ; \
 #define close_node 2
 #define special_node 3
 #define language_node 4
-#define what_lang(A) link(A+1) 
-#define what_lhm(A) type(A+1) 
-#define what_rhm(A) subtype(A+1) 
-#define write_tokens(A) link(A+1)  \
-
+#define what_lang(A) link(A+1)
+#define what_lhm(A) type(A+1)
+#define what_rhm(A) subtype(A+1)
+#define write_tokens(A) link(A+1)
 #define hitex_ext language_node+1
 #define param_node hitex_ext
 #define param_node_size 3
-#define param_type(A) type(A+1) 
+#define param_type(A) type(A+1)
 #define glue_type 2
-#define param_no(A) subtype(A+1) 
-#define param_value(A) mem[A+2] \
-
+#define param_no(A) subtype(A+1)
+#define param_value(A) mem[A+2]
 #define par_node hitex_ext+1
 #define par_node_size 5
 #define par_penalty(A) mem[A+1].i
-#define par_extent(A) link(A+3) 
-#define par_params(A) info(A+4) 
-#define par_list(A) link(A+4)  \
-
+#define par_extent(A) link(A+3)
+#define par_params(A) info(A+4)
+#define par_list(A) link(A+4)
 #define disp_node hitex_ext+2
 #define disp_node_size 3
-#define display_left(A) type(A+1) 
-#define display_no_bs(A) subtype(A+1) 
-#define display_params(A) link(A+1) 
-#define display_formula(A) link(A+2) 
-#define display_eqno(A) info(A+2)  \
-
+#define display_left(A) type(A+1)
+#define display_no_bs(A) subtype(A+1)
+#define display_params(A) link(A+1)
+#define display_formula(A) link(A+2)
+#define display_eqno(A) info(A+2)
 #define baseline_node hitex_ext+3
-#define baseline_node_size small_node_size \
-
+#define baseline_node_size small_node_size
 #define image_node hitex_ext+4
 #define image_node_size 6
 #define image_width(A) mem[A+1].sc
 #define image_height(A) mem[A+2].sc
-#define image_no(A) link(A+3) 
-#define image_alt(A) link(A+5)  \
-
+#define image_no(A) link(A+3)
+#define image_alt(A) link(A+5)
 #define hpack_node hitex_ext+5
 #define vpack_node hitex_ext+6
 #define pack_node_size box_node_size
-#define pack_m(A) type(A+list_offset) 
+#define pack_m(A) type(A+list_offset)
 #define pack_limit(A) mem[(A) +1+list_offset].sc
-#define pack_extent(A) link(A+2+list_offset)  \
-
+#define pack_extent(A) link(A+2+list_offset)
 #define hset_node hitex_ext+7
 #define vset_node hitex_ext+8
 #define set_node_size box_node_size
 #define set_stretch_order glue_sign
 #define set_shrink_order glue_order
 #define set_stretch(A) mem[(A) +1+list_offset].sc
-#define set_extent(A) pack_extent(A) 
-#define set_shrink(A) mem[(A) +3+list_offset].sc \
-
+#define set_extent(A) pack_extent(A)
+#define set_shrink(A) mem[(A) +3+list_offset].sc
 #define align_node hitex_ext+9
 #define align_node_size 4
-#define align_extent(A) link(A+2) 
-#define align_m(A) type(A+2) 
-#define align_preamble(A) info(A+3) 
-#define align_list(A) link(A+3)  \
-
+#define align_extent(A) link(A+2)
+#define align_m(A) type(A+2)
+#define align_preamble(A) info(A+3)
+#define align_list(A) link(A+3)
 #define setpage_node hitex_ext+10
 #define setpage_node_size 6
-#define setpage_topskip(A) link(A+2) 
-#define setpage_height(A) info(A+4) 
-#define setpage_width(A) link(A+4) 
-#define setpage_list(A) info(A+5) 
-#define setpage_streams(A) link(A+5)  \
-
+#define setpage_topskip(A) link(A+2)
+#define setpage_height(A) info(A+4)
+#define setpage_width(A) link(A+4)
+#define setpage_list(A) info(A+5)
+#define setpage_streams(A) link(A+5)
 #define setstream_node hitex_ext+11
 #define setstream_node_size 6
-#define setstream_max(A) info(A+3) 
-#define setstream_width(A) link(A+3) 
-#define setstream_topskip(A) info(A+4) 
-#define setstream_height(A) link(A+4) 
-#define setstream_before(A) info(A+5) 
-#define setstream_after(A) link(A+5)  \
-
+#define setstream_max(A) info(A+3)
+#define setstream_width(A) link(A+3)
+#define setstream_topskip(A) info(A+4)
+#define setstream_height(A) link(A+4)
+#define setstream_before(A) info(A+5)
+#define setstream_after(A) link(A+5)
 #define stream_node hitex_ext+12
 #define stream_node_size 2
-#define stream_number(A) type(A+1) 
-#define stream_insertion(A) subtype(A+1)  \
- \
-
+#define stream_number(A) type(A+1)
+#define stream_insertion(A) subtype(A+1)
 #define xdimen_node hitex_ext+15
 #define xdimen_node_size 4
-#define xdimen_ref_count(A) link(A) 
+#define xdimen_ref_count(A) link(A)
 #define xdimen_width(A) mem[A+1].sc
 #define xdimen_hfactor(A) mem[A+2].sc
-#define xdimen_vfactor(A) mem[A+3].sc \
-
+#define xdimen_vfactor(A) mem[A+3].sc
 #define ignore_node hitex_ext+16
 #define ignore_node_size small_node_size
-#define ignore_info(A) type(A+1) 
-#define ignore_list(A) link(A+1)  \
-
+#define ignore_info(A) type(A+1)
+#define ignore_list(A) link(A+1)
 #define color_node hitex_ext+17
 #define end_color_node hitex_ext+18
 #define no_color_node hitex_ext+22
 #define color_node_size small_node_size
-#define color_ref(A) type(A+1)  \
-
+#define color_ref(A) type(A+1)
 #define label_node hitex_ext+23
 #define label_node_size 2
-#define label_ref(A) link(A+1)  \
-
+#define label_ref(A) link(A+1)
 #define start_link_node hitex_ext+24
 #define end_link_node hitex_ext+25
 #define link_node_size 3
-#define as_color(A) (A) 
-#define as_label(A) ((A) +1)  \
-
+#define as_color(A) (A)
+#define as_label(A) ((A) +1)
 #define outline_node hitex_ext+26
 #define outline_node_size 3
-#define outline_ptr(A) link(A+2) 
-#define outline_depth(A) info(A+2)  \
-
+#define outline_ptr(A) link(A+2)
+#define outline_depth(A) info(A+2)
 #define utf_char_node hitex_ext+27
 #define utf_char_node_size small_node_size
 #define utf_font_char(A) mem[A+1].i
-#define utf_font(A) (utf_font_char(A) >>24) 
-#define utf_char(A) (utf_font_char(A) &0xFFFFFF)  \
-
+#define utf_font(A) (utf_font_char(A) >>24)
+#define utf_char(A) (utf_font_char(A) &0xFFFFFF)
 #define utf_lig_node hitex_ext+28
 #define utf_lig_node_size 3
-#define utf_lig_subtype(A) subtype(A+2) 
-#define utf_lig_ptr(A) link(A+2)  \
-
-#define adv_past(A) {} \
-
-#define billion float_constant(1000000000) 
+#define utf_lig_subtype(A) subtype(A+2)
+#define utf_lig_ptr(A) link(A+2)
+#define adv_past(A) {}
+#define billion float_constant(1000000000)
 #define vet_glue(A) glue_temp= A; \
 if(glue_temp> billion)  \
 glue_temp= billion; \
 else if(glue_temp<-billion)  \
-glue_temp= -billion \
-
+glue_temp= -billion
 
 #line 14896 "hint.w"
 
@@ -2205,7 +2079,7 @@ if(file_offset==max_print_line)print_ln();
 #line 14908 "hint.w"
 
 #endif
-#line 14873 "hint.w"
+#line 14910 "hint.w"
 
 /*11:*/
 #line 605 "hint.w"
@@ -6762,7 +6636,7 @@ return par_ptr;
 
 pointer hget_paragraph_final(scaled x,uint8_t*from)
 {uint8_t*to;
-int par_color,par_label_ref;
+int par_color= 0,par_label_ref= 0;
 /*464:*/
 #line 9215 "hint.w"
 
@@ -7332,7 +7206,7 @@ return c;
 #define MAX_LEAKS (1<<16)
 static pointer leaks[MAX_LEAKS]= {0};
 #endif
-#line 14791 "hint.w"
+#line 14828 "hint.w"
 
 static void leak_clear(void)
 {
@@ -7341,7 +7215,7 @@ int i;
 for(i= 0;i<MAX_LEAKS;i++)
 leaks[i]= 0;
 #endif
-#line 14799 "hint.w"
+#line 14836 "hint.w"
 }
 
 static void leak_in(pointer p,int s)
@@ -7351,7 +7225,7 @@ if(0!=leaks[p])
 fprintf(stderr,"ERROR leak in: p=%d, s in=%d, leaks[p]= %d != 0\n",p,s,leaks[p]);
 leaks[p]= s;
 #endif
-#line 14808 "hint.w"
+#line 14845 "hint.w"
 }
 
 static void leak_out(pointer p,int s)
@@ -7361,7 +7235,7 @@ if(s!=leaks[p])
 fprintf(stderr,"ERROR: leak out: p=%d, s out=%d != %d = s in\n",p,s,leaks[p]);
 leaks[p]= 0;
 #endif
-#line 14817 "hint.w"
+#line 14854 "hint.w"
 }
 
 static void list_leaks(void)
@@ -7372,7 +7246,7 @@ for(i= 0;i<MAX_LEAKS;i++)
 if(leaks[i]!=0)
 fprintf(stderr,"ERROR:leak final: p=%d, s=%d\n",i,leaks[i]);
 #endif
-#line 14827 "hint.w"
+#line 14864 "hint.w"
 }
 /*:686*/
 #line 14915 "hint.w"
@@ -8500,7 +8374,7 @@ void hint_show_page(void)
 #line 14927 "hint.w"
 
 #else
-#line 14892 "hint.w"
+#line 14929 "hint.w"
 
 /*592:*/
 #line 11810 "hint.w"
@@ -10940,7 +10814,7 @@ int hint_print(unsigned char*bits)
 #line 14932 "hint.w"
 
 #endif
-#line 14897 "hint.w"
+#line 14934 "hint.w"
 
 
 /*354:*/

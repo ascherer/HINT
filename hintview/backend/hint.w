@@ -28,7 +28,7 @@
 \input hintmac.tex
 \input epsf.tex
 
-@i symbols.w
+@q @@i symbols.w @>
 
 
 
@@ -9274,7 +9274,7 @@ Otherwise we remove unwanted space from the beginning of the list.
 @<\HINT\ auxiliar functions@>=
 pointer hget_paragraph_final(scaled x, uint8_t *from)
 {@+uint8_t *to;
-  int par_color,par_label_ref;
+  int par_color=0,par_label_ref=0;
   @<prepare for reading the paragraph list@>@;
   @<check for a color change in the initial section of the paragraph@>@;
   hpos=from; to=list_end;
@@ -15025,5 +15025,5 @@ the \HINT\ rendering functions.
 }
 
   \write\cont{} % ensure that the contents file isn't empty
-%  \write\cont{\catcode `\noexpand\@=12\relax}   % \makeatother
+%  \write\cont{\catcode `\noexpand\@@=12\relax}   % \makeatother
   \closeout\cont% the contents information has been fully gathered

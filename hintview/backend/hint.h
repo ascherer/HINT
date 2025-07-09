@@ -1,5 +1,5 @@
 /*689:*/
-#line 14904 "hint.w"
+#line 14941 "hint.w"
 
 #ifndef _HINT_H
 #define _HINT_H
@@ -54,7 +54,7 @@ int p;
 char*title;
 }hint_Outline;
 /*:584*/
-#line 14947 "hint.w"
+#line 14984 "hint.w"
 
 extern int hint_get_outline_max(void);
 extern hint_Outline*hint_get_outlines(void);
@@ -66,4 +66,5 @@ extern bool hint_map(void);
 extern void hint_unmap(void);
 
 #endif
+#line 14995 "hint.w"
 /*:689*/
