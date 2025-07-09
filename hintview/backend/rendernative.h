@@ -53,4 +53,5 @@ extern void nativeBackground(double x,double y,double h,double w,uint32_t bg);
 #line 14794 "hint.w"
 
 #endif
+#line 14796 "hint.w"
 /*:685*/

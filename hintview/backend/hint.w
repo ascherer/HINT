@@ -28,7 +28,7 @@
 \input hintmac.tex
 \input epsf.tex
 
-@i symbols.w
+@q @i symbols.w @>
 
 
 
@@ -9092,7 +9092,7 @@ start a new nesting level, and set its horizontal size.
 @<prepare for reading the paragraph list@>=
   pointer par_ptr=null;
   if (KIND(*hpos)==list_kind)
-  { uint32_t s, t;
+  { uint32_t s=0, t;
     @<read the start byte |a|@>@;
     if ((INFO(a)&b011)==0) 
       HGET8; /* the empty list */
@@ -9151,7 +9151,7 @@ Otherwise we remove unwanted space from the beginning of the list.
 @<\HINT\ auxiliar functions@>=
 pointer hget_paragraph_final(scaled x, uint8_t *from)
 {@+uint8_t *to;
-  int par_color,par_label_ref;
+  int par_color=0,par_label_ref=0;
   @<prepare for reading the paragraph list@>@;
   @<check for a color change in the initial section of the paragraph@>@;
   hpos=from; to=list_end;
