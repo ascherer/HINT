@@ -30,7 +30,16 @@
 
 @q @@i symbols.w @>
 
+\font\largetitlefont=cmssbx10 scaled\magstep4
+\font\Largetitlefont=cmssbx10 at 40pt
+\font\hugetitlefont=cmssbx10 at 48pt
+\font\smalltitlefontit=cmbxti10 scaled\magstep3
+\font\smalltitlefont=cmssbx10 scaled\magstep3
 
+\def\raggedleft{\leftskip=0pt plus 5em\parfillskip=0pt
+\spaceskip=.3333em \xspaceskip=0.5em \emergencystretch=1em\relax
+\hyphenpenalty=1000\exhyphenpenalty=1000\pretolerance=10000\linepenalty=5000
+}
 
 \makeindex
 \maketoc
